@@ -1,4 +1,7 @@
-package com.Anakost;
+package com.Anakost.HtmlViews;
+
+import com.Anakost.HtmlViews.IHtmlView;
+import com.Anakost.ITableModel;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -10,7 +13,7 @@ public class TableHtmlView implements IHtmlView {
 
     private ITableModel model;
 
-    TableHtmlView(ITableModel model){
+    public TableHtmlView(ITableModel model){
         this.model = model;
 
     }
