@@ -15,8 +15,8 @@ public class Main {
         InetSocketAddress tcpAdress= new InetSocketAddress(8080);
 
         server.bind(tcpAdress,0);
-//        server.createContext("/pi",new PersonalInfoHttpHandler());
-        server.createContext("/pi",new DnsResolverHttpHandler());
+         server.createContext("/pi",new PersonalInfoHttpHandler());
+        server.createContext("/dns",new DnsResolverHttpHandler());
 
         server.start();
         System.out.println("Server is running...");

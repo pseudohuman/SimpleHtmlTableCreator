@@ -10,10 +10,11 @@ public class FormHtmlView implements IHtmlView {
     @Override
     public void render(Writer writer) throws Exception {
         writer.write("<form action="+action+"method="+method+">");
-        writer.write("</from>");
+
         for (IHtmlView view:children){
             view.render(writer);
         }
+        writer.write("</from>");
 
     }
     private String action;
