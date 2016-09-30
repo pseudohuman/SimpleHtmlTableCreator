@@ -9,12 +9,12 @@ import java.util.ArrayList;
 public class FormHtmlView implements IHtmlView {
     @Override
     public void render(Writer writer) throws Exception {
-        writer.write("<form action="+action+"method="+method+">");
+        writer.write("<form action=\""+action+"\" method=\""+method+"\">\n");
 
         for (IHtmlView view:children){
             view.render(writer);
         }
-        writer.write("</form>");
+        writer.write("</form>\n");
 
     }
     private String action;

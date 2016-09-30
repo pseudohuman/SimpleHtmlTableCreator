@@ -14,6 +14,6 @@ public class InputTextHtmlView implements IHtmlView{
     }
     @Override
     public void render(Writer writer) throws Exception {
-        writer.write("<input type=\"text\" name="+name+">");
+        writer.write("<input type=\"text\" name=\""+name+"\">");
     }
 }

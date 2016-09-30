@@ -14,7 +14,7 @@ public class InputSubmitHtmlView implements IHtmlView {
     }
     @Override
     public void render(Writer writer) throws Exception {
-        writer.write("<input type=\"submit\""+"value"+text+">");
+        writer.write("<input type=\"submit\""+" value=\""+text+"\">");
 
     }
 }
