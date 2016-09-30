@@ -14,7 +14,7 @@ public class FormHtmlView implements IHtmlView {
         for (IHtmlView view:children){
             view.render(writer);
         }
-        writer.write("</from>");
+        writer.write("</form>");
 
     }
     private String action;
