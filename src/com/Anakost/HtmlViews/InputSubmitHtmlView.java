@@ -1,6 +1,8 @@
 package com.Anakost.HtmlViews;
 
-import java.io.Writer;
+import com.Anakost.IHtmlWriter;
+
+import java.io.IOException;
 
 /**
  * Created by Анатолій on 28.09.2016.
@@ -13,8 +15,11 @@ public class InputSubmitHtmlView implements IHtmlView {
         return this;
     }
     @Override
-    public void render(Writer writer) throws Exception {
-        writer.write("<input type=\"submit\""+" value=\""+text+"\">");
+    public void render(IHtmlWriter writer) throws IOException {
+        writer.openTag("input")
+            .attribute("type","submit")
+            .attribute("value",text)
+            .closeTag();
 
     }
 }

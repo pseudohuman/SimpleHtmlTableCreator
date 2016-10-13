@@ -1,6 +1,8 @@
 package com.Anakost.HtmlViews;
 
-import java.io.Writer;
+import com.Anakost.IHtmlWriter;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -15,26 +17,50 @@ public class PageHtmlView implements IHtmlView {
     }
 
     private final ArrayList<IHtmlView> body=new ArrayList<>();
-    public PageHtmlView bodyAppend(IHtmlView view){
-        body.add(view);
+    public PageHtmlView addChild(IHtmlView view){
+        if (view!=null) {
+            body.add(view);
+        }
         return this;
     }
 
     @Override
-    public void render(Writer writer) throws Exception {
-        writer.write("<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "   <head>\n" +
-                "      <meta charset=\"utf-8\">\n" +
-                "      <title>" + this.title+ "</title>\n" +
-                "   </head>\n" +
-                "   <body>\n"
-        );
+    public void render(IHtmlWriter writer) throws IOException {
+        writer
+            .openTag("!DOCTYPE")
+                .attribute("html")
+            .closeTag()
+            .newLine()
+            .startTag("html")
+                .newLine()
+                .startTag("head")
+                    .newLine()
+                        .openTag("meta")
+                        .attribute("charset","utf-8")
+                        .closeTag()
+                        .newLine();
+                        if (title!=null) writer.startTag("title").writeText(this.title).endTag();
+                writer.newLine()
+                .endTag()
+                .newLine()
+                .startTag("body");
+
+//        writer.write("<!DOCTYPE html>\n" +
+//                "<html>\n" +
+//                "   <head>\n" +
+//                "      <meta charset=\"utf-8\">\n" +
+//                "      <title>" + this.title+ "</title>\n" +
+//                "   </head>\n" +
+//                "   <body>\n"
+//        );
         for (IHtmlView view:body){
             view.render(writer);
         }
-        writer.write( "   </body>\n" +
-                "</html>");
+        writer
+            .newLine()
+            .endTag()
+            .newLine()
+            .endTag();
 
     }
 

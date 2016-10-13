@@ -1,7 +1,9 @@
 package com.Anakost.HtmlViews;
 
-import java.io.Writer;
+import com.Anakost.IHtmlWriter;
+
+import java.io.IOException;
 
 public interface IHtmlView {
-    void render(Writer writer) throws Exception;
+    void render(IHtmlWriter writer) throws IOException;
 }
