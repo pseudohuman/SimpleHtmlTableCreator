@@ -1,26 +1,25 @@
 package com.Anakost.HtmlViews;
 
+import com.Anakost.IHtmlAttributeWriter;
 import com.Anakost.IHtmlWriter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Анатолій on 30.09.2016.
  */
-public class DivHtmlView implements IHtmlView {
-    private final ArrayList<IHtmlView> children =new ArrayList<>();
-    public DivHtmlView addChild(IHtmlView view){
-        children.add(view);
-        return this;
-    }
+public class DivHtmlView extends ContentElementHtmlView<DivHtmlView> {
+
 
     @Override
     public void render(IHtmlWriter writer) throws IOException {
-        writer.startTag("div");
+        IHtmlAttributeWriter attrWriter = writer.openStartTag("div");
+        if (classSet!=null && classSet.size()>0) attrWriter.attribute("class",String.join(" ",classSet));
+        attrWriter.closeTag();
         for (IHtmlView view: children){
             view.render(writer);
         }
+
         writer.endTag();
     }
 }

@@ -8,7 +8,7 @@ import java.io.Reader;
  * Created by Анатолій on 24.09.2016.
  */
 public class PersonalInfoCsvParser {
-    public static void parse(BufferedReader reader, IPersonalInfoConsumer consumer) throws Exception {
+    public static void parse(BufferedReader reader, IPersonalInfoConsumer consumer) throws IOException {
         String s =reader.readLine();
         if(s==null) return;
         consumer.setHeaders(s.split("\t"));

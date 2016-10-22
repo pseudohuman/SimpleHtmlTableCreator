@@ -21,8 +21,8 @@ public class ExceptionTestHttpHandler implements HttpHandler {
     public static final String PATH = "/ex";
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        httpExchange.getResponseHeaders().add("Content-Type","text/html");
-        try (IHtmlWriter htmlTagWriter = HttpHelper.getHtmlWriter(httpExchange, HttpURLConnection.HTTP_OK)) {
+        HttpHelper.setContentType(httpExchange,"text/plain");
+        try (IHtmlWriter htmlWriter = HttpHelper.getHtmlWriter(httpExchange, HttpURLConnection.HTTP_OK)) {
             new PageHtmlView()
                 .title("ExceptionTestHttpHandler").addChild((writer1) -> {
                 writer1.
@@ -30,7 +30,8 @@ public class ExceptionTestHttpHandler implements HttpHandler {
                     .writeText("Hello World")
                     .endTag()
                 ;
-            }).render(htmlTagWriter);
+            }).render(htmlWriter);
         }
+        throw new IOException();
     }
 }

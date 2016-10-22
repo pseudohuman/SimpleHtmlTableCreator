@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -18,25 +19,23 @@ public class PersonalInfoHttpHandler implements HttpHandler {
     public static final String PATH = "/pi";
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange http) throws IOException {
 
-        exchange.sendResponseHeaders(200,0);
-        try(BufferedWriter writer =new BufferedWriter(new OutputStreamWriter(exchange.getResponseBody(), StandardCharsets.UTF_8))) {
-            HtmlWriter htmlWriter = new HtmlWriter(writer);
+
+        try(IHtmlWriter htmlWriter = HttpHelper.getHtmlWriter(http, HttpURLConnection.HTTP_OK)) {
+
             new PageHtmlView()
                 .title("Personal Information")
-                .addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(exchange).principal.login))
+                .addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(http).principal.login))
                 .addChild(new GridHtmlView(loadPersonalInfo()))
                 .render(htmlWriter);
 
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    private ITableModel loadPersonalInfo() throws Exception{
+    private ITableModel loadPersonalInfo() throws IOException{
         PersonalInfoTableModel model=new PersonalInfoTableModel();
-        try(InputStream stream=ClassLoader.getSystemClassLoader().getResourceAsStream("PersonalInfo.csv")) {
+        try(InputStream stream=PersonalInfoHttpHandler.class.getResourceAsStream("/PersonalInfo.csv")) {
             PersonalInfoCsvParser.parse(new BufferedReader(new InputStreamReader(stream)),model);
         }
 

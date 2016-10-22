@@ -26,12 +26,14 @@ public class ExceptionFilter extends Filter {
             httpExchange.setStreams(httpExchange.getRequestBody(),outputStream);
             chain.doFilter(httpExchange);
             httpExchange.sendResponseHeaders((int)httpExchange.getAttribute(HttpHelper.STATUS_CODE_KEY),0);
+            outputStream.close();
             outputStream.writeTo(responseStream);
 
 
         }catch (Exception e){
             e.printStackTrace();
-            httpExchange.getResponseHeaders().add("Content-Type","text/html");
+            httpExchange.getResponseHeaders().clear();
+            HttpHelper.setContentType(httpExchange,"text/html");
             httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR,0);
             httpExchange.setStreams(httpExchange.getRequestBody(),responseStream);
 

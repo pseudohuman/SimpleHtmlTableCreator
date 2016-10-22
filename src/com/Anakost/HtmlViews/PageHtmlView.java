@@ -16,6 +16,16 @@ public class PageHtmlView implements IHtmlView {
         return this;
     }
 
+    private ArrayList<String> cssLinkList;
+    public PageHtmlView addCssLink(String link){
+        if (cssLinkList ==null){
+            cssLinkList =new ArrayList<>();
+        }
+        cssLinkList.add(link);
+        return this;
+
+    }
+
     private final ArrayList<IHtmlView> body=new ArrayList<>();
     public PageHtmlView addChild(IHtmlView view){
         if (view!=null) {
@@ -40,19 +50,17 @@ public class PageHtmlView implements IHtmlView {
                         .closeTag()
                         .newLine();
                         if (title!=null) writer.startTag("title").writeText(this.title).endTag();
+                        if (cssLinkList !=null && cssLinkList.size()>0) {
+                            for (String cssRef: cssLinkList){
+                                writer.newLine()
+                                .openTag("link").attribute("rel","stylesheet").attribute("href",cssRef).closeTag();
+                            }
+                        }
                 writer.newLine()
                 .endTag()
                 .newLine()
                 .startTag("body");
 
-//        writer.write("<!DOCTYPE html>\n" +
-//                "<html>\n" +
-//                "   <head>\n" +
-//                "      <meta charset=\"utf-8\">\n" +
-//                "      <title>" + this.title+ "</title>\n" +
-//                "   </head>\n" +
-//                "   <body>\n"
-//        );
         for (IHtmlView view:body){
             view.render(writer);
         }

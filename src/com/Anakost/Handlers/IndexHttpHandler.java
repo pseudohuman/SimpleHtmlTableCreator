@@ -11,6 +11,8 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -20,10 +22,10 @@ public class IndexHttpHandler implements HttpHandler {
     public static final String PATH = "/";
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        httpExchange.sendResponseHeaders(200, 0);
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(httpExchange.getResponseBody(), StandardCharsets.UTF_8))) {
-            IHtmlWriter htmlTagWriter = new HtmlWriter(writer);
+    public void handle(HttpExchange http) throws IOException {
+
+        try (IHtmlWriter htmlTagWriter = HttpHelper.getHtmlWriter(http,HttpURLConnection.HTTP_OK)) {
+
             new PageHtmlView()
                 .title("Index Page").addChild((writer1) -> {
                 writer1.
@@ -38,7 +40,7 @@ public class IndexHttpHandler implements HttpHandler {
                     .endTag()
                 .endTag()
                 ;
-            }).addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(httpExchange).principal.login)).render(htmlTagWriter);
+            }).addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(http).principal.login)).render(htmlTagWriter);
 
 
         }

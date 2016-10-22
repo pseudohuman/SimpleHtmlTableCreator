@@ -1,9 +1,9 @@
 package com.Anakost;
 
 public class PrincipalInfo{
-    public String password;
+    public byte[] password;
     public String login;
-    PrincipalInfo(String login,String password){
+    PrincipalInfo(String login,byte[] password){
         this.password=password;
         this.login=login;
     }

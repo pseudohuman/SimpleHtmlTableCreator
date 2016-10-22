@@ -31,8 +31,10 @@ public class HeaderHtmlView implements IHtmlView {
                 .writeText("Logout")
                 .endTag()
 
-            .endTag()
-        ;
+            ;
+                new FileLoaderForm().render(writer);
+            writer.endTag();
+
 
     }
 }

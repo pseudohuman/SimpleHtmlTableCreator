@@ -1,0 +1,41 @@
+.login-form{
+    display:inline-block;
+    background:#e3eef4;
+    border-radius:8px;
+    box-shadow: -10px 14px 10px 6px rgba(0,0,0,0.32);
+}
+input[type="submit"]{
+	background:#057C8E;
+	border-radius: 6px;
+	font-weight: bold;
+
+	border:none;
+}
+input[type="submit"]:hover{
+    color: #F3D6D7;
+
+}
+input[type="submit"]:active{
+
+	background: #012020;
+	color: #030A29;
+
+}
+input[type="submit"]:focus{
+
+	background: #012020;
+	color: #030A29;
+
+	outline: none;
+
+}
+
+input[type="text"]:focus{
+
+	outline: none;
+}
+body{
+	background: linear-gradient(-45deg,rgba(200,0,0,.5) 70%, transparent 20%,#047672 10%) ,
+	linear-gradient(45deg, rgba(200,0,0,.5) 70%, transparent 20%,#06CBA4 10%);
+	background-size:50px 50px;
+}

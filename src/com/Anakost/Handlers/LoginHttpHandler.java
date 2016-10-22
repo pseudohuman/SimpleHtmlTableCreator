@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -22,60 +23,55 @@ public class LoginHttpHandler implements HttpHandler {
     private final String passwordName = "Password";
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public void handle(HttpExchange http) throws IOException {
 
-        switch (httpExchange.getRequestMethod()) {
+        switch (http.getRequestMethod()) {
             case "GET":
-                handleGet(httpExchange);
+                handleGet(http);
                 break;
             case "POST":
-                handlePost(httpExchange);
+                handlePost(http);
                 break;
             default:
-                httpExchange.sendResponseHeaders(405, 0);
+                HttpHelper.setStatusCode(http,HttpURLConnection.HTTP_BAD_METHOD);
                 break;
         }
 
     }
 
-    private void handleGet(HttpExchange httpExchange) throws IOException {
-        if (HttpHelper.getQueryMap(httpExchange).containsKey(LOGOUT_PARAM)) HttpHelper.logout(httpExchange);
-        else if (HttpHelper.createSession(httpExchange) != null) {
-            HttpHelper.redirect(httpExchange, IndexHttpHandler.PATH);
+    private void handleGet(HttpExchange http) throws IOException {
+        if (HttpHelper.getQueryMap(http).containsKey(LOGOUT_PARAM)) HttpHelper.logout(http);
+        else if (HttpHelper.createSession(http) != null) {
+            HttpHelper.redirect(http, IndexHttpHandler.PATH);
             return;
         }
-        httpExchange.sendResponseHeaders(200, 0);
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(httpExchange.getResponseBody(), StandardCharsets.UTF_8))) {
-            IHtmlWriter htmlTagWriter = new HtmlWriter(writer);
-            createPage(null, null)
-                .render(htmlTagWriter);
+        try (IHtmlWriter htmlWriter = HttpHelper.getHtmlWriter(http, HttpURLConnection.HTTP_OK)) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            createPage(null, null)
+                .render(htmlWriter);
+
         }
 
     }
 
-    private void handlePost(HttpExchange httpExchange) throws IOException {
+    private void handlePost(HttpExchange http) throws IOException {
 
-        HttpHelper.logout(httpExchange);
+        HttpHelper.logout(http);
 
-        Map<String, String> queryMap = HttpHelper.getQueryMap(httpExchange);
+        Map<String, String> queryMap = HttpHelper.getQueryMap(http);
         String login = queryMap.get(loginName);
         String password = queryMap.get(passwordName);
 
         Session session = SessionManager.instance.authorize(login, password);
         if (session != null) {
-            HttpHelper.setCookie(httpExchange, Session.NAME, session.id, true, 3600);
+            HttpHelper.setCookie(http, Session.NAME, session.id, true, 3600);
             String postLoginUrl = queryMap.get(HttpHelper.POST_LOGIN_URL_NAME);
-            HttpHelper.redirect(httpExchange, postLoginUrl != null ? postLoginUrl : IndexHttpHandler.PATH);
+            HttpHelper.redirect(http, postLoginUrl != null ? postLoginUrl : IndexHttpHandler.PATH);
         } else {
-            httpExchange.sendResponseHeaders(200, 0);
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(httpExchange.getResponseBody(), StandardCharsets.UTF_8))) {
-                IHtmlWriter htmlTagWriter = new HtmlWriter(writer);
-                createPage(new DivHtmlView().addChild(new TextHtmlView("Invalid login or password !")), login)
-                    .render(htmlTagWriter);
 
+            try (IHtmlWriter htmlWriter = HttpHelper.getHtmlWriter(http, HttpURLConnection.HTTP_OK)) {
+                createPage(new DivHtmlView().addChild(new TextHtmlView("Invalid login or password !")), login)
+                    .render(htmlWriter);
             }
         }
 
@@ -85,6 +81,7 @@ public class LoginHttpHandler implements HttpHandler {
     private PageHtmlView createPage(IHtmlView error,String login) {
         return new PageHtmlView()
             .title("Login")
+            .addCssLink("/res/1")
             .addChild(error)
             .addChild(
                 new FormHtmlView()
@@ -93,7 +90,7 @@ public class LoginHttpHandler implements HttpHandler {
                         writer.newLine()
                         .openStartTag("div").attribute("style","text-align:center").closeTag().newLine()
 
-                            .openStartTag("table").attribute("style","display:inline-block;background:#e3eef4;border-radius:8px;box-shadow: -10px 14px 10px 6px rgba(0,0,0,0.32);").closeTag().newLine()
+                            .openStartTag("table").attribute("class","login-form").closeTag().newLine()
                                 .startTag("tr").newLine()
                                     .startTag("td").writeText("Логин: ").endTag()
                                     .startTag("td");

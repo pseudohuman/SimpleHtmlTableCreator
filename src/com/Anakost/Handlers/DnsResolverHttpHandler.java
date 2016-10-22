@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -21,10 +22,10 @@ public class DnsResolverHttpHandler implements HttpHandler {
 
     private final String fieldName = "DNS";
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public void handle(HttpExchange http) throws IOException {
 
-        httpExchange.sendResponseHeaders(200, 0);
-        Map<String,String> map= HttpHelper.getQueryMap(httpExchange);
+
+        Map<String,String> map= HttpHelper.getQueryMap(http);
         String dnsValue=map.get(fieldName);
 
         DivHtmlView addressDiv=null;
@@ -42,11 +43,11 @@ public class DnsResolverHttpHandler implements HttpHandler {
         TextHtmlView varDiv=null;
         if (!map.isEmpty()) varDiv=new TextHtmlView(createText(map));
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(httpExchange.getResponseBody(), StandardCharsets.UTF_8))) {
-            IHtmlWriter htmlTagWriter = new HtmlWriter(writer);
+        try (IHtmlWriter htmlTagWriter = HttpHelper.getHtmlWriter(http, HttpURLConnection.HTTP_OK)) {
+
             new PageHtmlView()
                     .title("Personal Information")
-                    .addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(httpExchange).principal.login))
+                    .addChild(new HeaderHtmlView().setUsername(HttpHelper.getSession(http).principal.login))
                     .addChild(varDiv)
                     .addChild(addressDiv)
                     .addChild(
@@ -60,8 +61,6 @@ public class DnsResolverHttpHandler implements HttpHandler {
 
                     .render(htmlTagWriter);
 
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

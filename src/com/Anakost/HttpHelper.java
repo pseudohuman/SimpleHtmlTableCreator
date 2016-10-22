@@ -3,6 +3,7 @@ package com.Anakost;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -33,14 +34,17 @@ public class HttpHelper {
             String value = string.substring( index+1,string.length());
             map.put(URLDecoder.decode(name,"UTF-8"), URLDecoder.decode(value,"UTF-8"));
         }
+    }
 
+    public static void setStatusCode(HttpExchange http, int statusCode) {
+        http.setAttribute(STATUS_CODE_KEY,statusCode);
     }
 
     public static IHtmlWriter getHtmlWriter(HttpExchange http, int statusCode){
         http.setAttribute(STATUS_CODE_KEY,statusCode);
         return new HtmlWriter(new BufferedWriter(new OutputStreamWriter(http.getResponseBody(), StandardCharsets.UTF_8)));
-
     }
+
     public static Map<String,String> getQueryMap(HttpExchange http) throws IOException {
 
         Map<String, String> map = (Map) http.getAttribute(QUERY_KEY) ;
@@ -97,7 +101,7 @@ public class HttpHelper {
     public static void redirect(HttpExchange http,String adress) throws IOException {
 
         http.getResponseHeaders().add("Location", adress);
-        http.sendResponseHeaders(302, 0);
+        HttpHelper.setStatusCode(http, HttpURLConnection.HTTP_MOVED_TEMP);
     }
 
     public static void setCookie(HttpExchange http,String name,String value,boolean httpOnly,int maxAge){
@@ -123,6 +127,9 @@ public class HttpHelper {
         deleteCookie(http,Session.NAME);
 
 
+    }
+    public static void setContentType(HttpExchange http,String mimeType){
+        http.getResponseHeaders().add("Content-Type",mimeType);
     }
     public static void clearCache(HttpExchange http){
         http.setAttribute(COOKIE_KEY,null);
